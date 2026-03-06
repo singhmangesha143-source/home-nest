@@ -1,4 +1,7 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+// Load .env only in local development — Vercel/production injects env vars directly
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+}
 
 // ── Startup env validation ──────────────────────────────────────────────────
 const REQUIRED_ENV = ['SUPABASE_URL', 'SUPABASE_SERVICE_KEY', 'JWT_SECRET'];
