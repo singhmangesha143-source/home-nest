@@ -32,12 +32,16 @@ app.use(helmet());
 // ── CORS ────────────────────────────────────────────────────────────────────
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-  : ['http://localhost:3000', 'http://localhost:5173'];
+  : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, server-to-server)
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow requests with no origin (curl, server-to-server)
+    if (!origin) return callback(null, true);
+    // Allow all Vercel deployment URLs (preview + production)
+    if (origin.match(/^https:\/\/.*\.vercel\.app$/)) return callback(null, true);
+    // Allow explicitly configured origins
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
